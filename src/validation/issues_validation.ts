@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import Joi, { number } from 'joi'
 
 export const issueSchema = Joi.object({
     title: Joi.string().min(3).required(),
@@ -18,7 +18,9 @@ export const updateIssueSchema = Joi.object({
 
 export const paginationSchema = Joi.object({
     page: Joi.number().positive().min(1).default(1),
-    pageSize: Joi.number().min(1).max(50).default(10)
+    pageSize: Joi.number().min(1).max(50).default(10),
+    total: Joi.number(),
+    totalPages: Joi.number()
 })
 
 export const idParamSchema = Joi.number().positive()

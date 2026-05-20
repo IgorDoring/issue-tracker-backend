@@ -1,17 +1,32 @@
 import { Express } from 'express'
 import { IssuesModel } from '../data/orm/models/issues'
-import { idParamSchema, issueSchema, updateIssueSchema } from '../validation/issues_validation'
+import {
+    idParamSchema,
+    issueSchema,
+    paginationSchema,
+    updateIssueSchema
+} from '../validation/issues_validation'
 
 export const createIssuesRoutes = (app: Express) => {
     app.get('/issues', async (req, res) => {
         const page = Number.parseInt(req.query.page?.toString() ?? '1')
         const pageSize = Number.parseInt(req.query.pageSize?.toString() ?? '3')
+        const total = await IssuesModel.count()
+        const totalPages = Math.ceil(total / pageSize)
 
-        const issues = await IssuesModel.findAll({
-            limit: pageSize,
-            offset: (page - 1) * pageSize
-        })
-        res.json(issues)
+        const { error } = paginationSchema.validate({ page, pageSize, total, totalPages })
+
+        if (error) return res.status(400).json({ message: error.message })
+
+        try {
+            const issues = await IssuesModel.findAll({
+                limit: pageSize,
+                offset: (page - 1) * pageSize
+            })
+            res.json({ issues, page, pageSize, totalPages, total })
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to fetch issues ' })
+        }
     })
     app.get('/issues/:id', async (req, res) => {
         const id = req.params.id

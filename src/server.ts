@@ -2,12 +2,14 @@ import express, { Express } from 'express'
 import helmet from 'helmet'
 import { createRoutes } from './routes'
 import { initializeModelsAndDatabase, sequelize } from './data/orm/sequelize'
+import cors from 'cors'
 
 const port = process.env.PORT || 5000
 
 const app: Express = express()
 
 app.use(helmet())
+app.use(cors({ origin: process.env.CORS_ORIGIN }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
