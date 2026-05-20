@@ -4,7 +4,13 @@ import { idParamSchema, issueSchema, updateIssueSchema } from '../validation/iss
 
 export const createIssuesRoutes = (app: Express) => {
     app.get('/issues', async (req, res) => {
-        const issues = await IssuesModel.findAll()
+        const page = Number.parseInt(req.query.page?.toString() ?? '1')
+        const pageSize = Number.parseInt(req.query.pageSize?.toString() ?? '3')
+
+        const issues = await IssuesModel.findAll({
+            limit: pageSize,
+            offset: (page - 1) * pageSize
+        })
         res.json(issues)
     })
     app.get('/issues/:id', async (req, res) => {
