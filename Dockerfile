@@ -5,6 +5,7 @@ WORKDIR /usr/src/issue-tracker-backend
 COPY package.json .
 COPY tsconfig.json .
 COPY src ./src
+COPY issues.json .
 
 RUN npm install
 RUN npx tsc
