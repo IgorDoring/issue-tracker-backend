@@ -1,17 +1,15 @@
-FROM node:22-alpine
+FROM node:20 AS builder
+WORKDIR /usr/src/sportsstore
+COPY package.json tsconfig.json ./
+COPY src ./src
+RUN npm install && npx tsc
 
-RUN mkdir -p /usr/src/issue-tracker-backend
-
-COPY dist /usr/src/issue-tracker-backend/dist
-COPY issues.json /usr/src/issue-tracker-backend/
-COPY package.json /usr/src/issue-tracker-backend/
-
-WORKDIR /usr/src/issue-tracker-backend
-
+FROM node:20-alpine
+WORKDIR /usr/src/sportsstore
+COPY --from=builder /usr/src/sportsstore/dist ./dist
+COPY templates ./templates
+COPY products.json server.config.json production.server.config.json package.json ./
 RUN npm install --omit=dev
-
 ENV NODE_ENV=production
-
 EXPOSE 5000
-
 CMD ["node", "dist/server.js"]
