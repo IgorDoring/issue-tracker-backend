@@ -5,7 +5,7 @@ import { issues } from '../../../issues.json'
 
 export const sequelize = new Sequelize({
     dialect: 'postgres',
-    host: 'localhost',
+    host: process.env.DB_HOST || 'localhost',
     port: 5432,
     database: process.env.DB_NAME || 'issues',
     username: process.env.DB_USER || 'postgres',
