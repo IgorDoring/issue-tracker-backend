@@ -1,4 +1,4 @@
-import Joi, { number } from 'joi'
+import Joi from 'joi'
 
 export const issueSchema = Joi.object({
     title: Joi.string().min(3).required(),

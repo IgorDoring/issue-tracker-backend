@@ -6,21 +6,22 @@ import {
     paginationSchema,
     updateIssueSchema
 } from '../validation/issues_validation'
+import { Op } from 'sequelize'
 
 export const createIssuesRoutes = (app: Express) => {
     app.get('/issues', async (req, res) => {
         const page = Number.parseInt(req.query.page?.toString() ?? '1')
         const pageSize = Number.parseInt(req.query.pageSize?.toString() ?? '5')
+        const search = req.query.search?.toString().trim() ?? ''
 
         const { error } = paginationSchema.validate({ page, pageSize })
-
         if (error) return res.status(400).json({ message: error.message })
 
         try {
             const total = await IssuesModel.count({ where: { completed: null } })
             const totalPages = Math.ceil(total / pageSize)
             const issues = await IssuesModel.findAll({
-                where: { completed: null },
+                where: { completed: null, title: { [Op.iLike]: `%${search}%` } },
                 limit: pageSize,
                 offset: (page - 1) * pageSize
             })
