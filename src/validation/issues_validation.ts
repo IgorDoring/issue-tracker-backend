@@ -5,7 +5,7 @@ export const issueSchema = Joi.object({
     description: Joi.string(),
     priority: Joi.string().valid('high', 'low').required(),
     type: Joi.string().valid('Feature', 'Bug', 'Documentation').required(),
-    completed: Joi.date().less('now')
+    completed: Joi.date().max('now')
 })
 
 export const updateIssueSchema = Joi.object({
@@ -13,7 +13,7 @@ export const updateIssueSchema = Joi.object({
     description: Joi.string().optional(),
     priority: Joi.string().valid('high', 'low').optional(),
     type: Joi.string().valid('Feature', 'Bug', 'Documentation').optional(),
-    completed: Joi.date().less('now')
+    completed: Joi.date().max('now')
 })
 
 export const paginationSchema = Joi.object({

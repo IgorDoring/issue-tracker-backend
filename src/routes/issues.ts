@@ -10,16 +10,17 @@ import {
 export const createIssuesRoutes = (app: Express) => {
     app.get('/issues', async (req, res) => {
         const page = Number.parseInt(req.query.page?.toString() ?? '1')
-        const pageSize = Number.parseInt(req.query.pageSize?.toString() ?? '3')
-        const total = await IssuesModel.count()
-        const totalPages = Math.ceil(total / pageSize)
+        const pageSize = Number.parseInt(req.query.pageSize?.toString() ?? '5')
 
-        const { error } = paginationSchema.validate({ page, pageSize, total, totalPages })
+        const { error } = paginationSchema.validate({ page, pageSize })
 
         if (error) return res.status(400).json({ message: error.message })
 
         try {
+            const total = await IssuesModel.count({ where: { completed: null } })
+            const totalPages = Math.ceil(total / pageSize)
             const issues = await IssuesModel.findAll({
+                where: { completed: null },
                 limit: pageSize,
                 offset: (page - 1) * pageSize
             })
