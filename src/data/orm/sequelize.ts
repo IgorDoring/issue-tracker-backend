@@ -21,11 +21,14 @@ const addSeedData = async () => {
 
 export const initializeModelsAndDatabase = async () => {
     initModels(sequelize)
-    console.log('Initializing models and database...')
     if (process.env.NODE_ENV === 'development') {
         await sequelize.sync({ force: true })
         await addSeedData()
     } else {
         await sequelize.sync()
+        const count = await IssuesModel.count()
+        if (count === 0) {
+            await addSeedData()
+        }
     }
 }
