@@ -17,8 +17,8 @@ export const sequelize = new Sequelize({
 
 const addSeedData = async () => {
     await sequelize.transaction(async (transaction) => {
-        ;(await IssuesModel.bulkCreate(issues, { transaction }),
-            await UserModel.bulkCreate(users, { transaction }))
+        await IssuesModel.bulkCreate(issues, { transaction })
+        await UserModel.bulkCreate(users, { transaction })
     })
 }
 
