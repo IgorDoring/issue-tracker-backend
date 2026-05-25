@@ -7,9 +7,10 @@ import {
     updateIssueSchema
 } from '../validation/issues_validation'
 import { Op } from 'sequelize'
+import { requireAuth } from '../middleware/auth'
 
 export const createIssuesRoutes = (app: Express) => {
-    app.get('/issues', async (req, res) => {
+    app.get('/issues', requireAuth, async (req, res) => {
         const page = Number.parseInt(req.query.page?.toString() ?? '1')
         const pageSize = Number.parseInt(req.query.pageSize?.toString() ?? '5')
         const search = req.query.search?.toString().trim() ?? ''
@@ -30,7 +31,7 @@ export const createIssuesRoutes = (app: Express) => {
             res.status(500).json({ message: 'Failed to fetch issues ' })
         }
     })
-    app.get('/issues/:id', async (req, res) => {
+    app.get('/issues/:id', requireAuth, async (req, res) => {
         const id = req.params.id
         const { error } = idParamSchema.validate(id)
         if (error) return res.status(400).json({ message: error.message })
@@ -42,7 +43,7 @@ export const createIssuesRoutes = (app: Express) => {
             res.status(500).json({ message: 'Failed to fetch issue ' + id })
         }
     })
-    app.post('/issues', async (req, res) => {
+    app.post('/issues', requireAuth, async (req, res) => {
         const newIssue = req.body
         const { error, value } = issueSchema.validate(newIssue)
         if (error) return res.status(400).json({ message: error.message })
@@ -53,7 +54,7 @@ export const createIssuesRoutes = (app: Express) => {
             res.status(500).json({ message: 'Failed to create issue' })
         }
     })
-    app.put('/issues/:id', async (req, res) => {
+    app.put('/issues/:id', requireAuth, async (req, res) => {
         const toUpdateIssue = req.body
         const issueNo = req.params.id
 
@@ -70,7 +71,7 @@ export const createIssuesRoutes = (app: Express) => {
             res.status(500).json({ message: 'Failed to update issue' })
         }
     })
-    app.delete('/issues/:id', async (req, res) => {
+    app.delete('/issues/:id', requireAuth, async (req, res) => {
         const issueNo = req.params.id
 
         try {

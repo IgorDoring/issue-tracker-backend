@@ -2,6 +2,8 @@ import { Sequelize } from 'sequelize'
 import { IssuesModel } from './models/issues'
 import { initModels } from './models'
 import { issues } from '../../../issues.json'
+import { users } from '../../../users.json'
+import { UserModel } from './models/users'
 
 export const sequelize = new Sequelize({
     dialect: 'postgres',
@@ -15,7 +17,8 @@ export const sequelize = new Sequelize({
 
 const addSeedData = async () => {
     await sequelize.transaction(async (transaction) => {
-        await IssuesModel.bulkCreate(issues, { transaction })
+        ;(await IssuesModel.bulkCreate(issues, { transaction }),
+            await UserModel.bulkCreate(users, { transaction }))
     })
 }
 

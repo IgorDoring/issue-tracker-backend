@@ -3,6 +3,8 @@ import helmet from 'helmet'
 import { createRoutes } from './routes'
 import { initializeModelsAndDatabase, sequelize } from './data/orm/sequelize'
 import cors from 'cors'
+import { configurePassport } from './config/passport'
+import { authMiddleware } from './middleware/auth'
 
 const port = process.env.PORT || 5000
 
@@ -12,6 +14,9 @@ app.use(helmet())
 app.use(cors({ origin: process.env.CORS_ORIGIN }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+configurePassport()
+authMiddleware(app)
 
 createRoutes(app)
 
